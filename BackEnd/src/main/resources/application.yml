@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: UserManagementService
+
+  datasource:
+    username: postgres
+#    password: 123qwe
+#    url: jdbc:h2:mem:test
+#    driverClassName: org.h2.Driver
+    url: jdbc:postgresql://localhost:5432/UserManagement
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 8080
