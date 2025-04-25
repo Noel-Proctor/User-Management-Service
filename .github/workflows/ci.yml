@@ -14,6 +14,25 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    services:
+      # 2a) Start a PostgreSQL database for the backend tests
+      postgres:
+        image: postgres:15
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: 123qwe
+          POSTGRES_DB: usermgmt
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/usermgmt
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 123qwe
+
     steps:
       # 2a) Get your code from GitHub
       - name: Checkout code
