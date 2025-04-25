@@ -28,7 +28,7 @@ jobs:
 
       # 2c) Build and test your Spring Boot backend
       - name: Build & test backend
-        working-directory: backend
+        working-directory: ./backend
         run: mvn clean verify
 
       # 2d) Set up Node.js so we can build the frontend
