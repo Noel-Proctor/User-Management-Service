@@ -1,14 +1,8 @@
 package com.npro.UserManagementService.ModelValidationTests;
-
 import com.npro.UserManagementService.model.System_Role;
 import com.npro.UserManagementService.model.Users;
 import com.npro.UserManagementService.testUtil.BaseValidationTest;
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
