@@ -1,7 +1,5 @@
 package com.npro.UserManagementService.model;
-
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -39,7 +37,7 @@ public class Role {
         return Id;
     }
 
-    public @Size(min = 1, max = 50, message = "Role Name must be be between 1-50 characters.") String getRoleName() {
+    public String getRoleName() {
         return roleName;
     }
 
@@ -47,7 +45,7 @@ public class Role {
         this.roleName = roleName;
     }
 
-    public @NotNull Application getApplication() {
+    public Application getApplication() {
         return application;
     }
 

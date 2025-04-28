@@ -1,4 +1,5 @@
 package com.npro.UserManagementService.UserRepositoryTests;
+import com.npro.UserManagementService.model.System_Role;
 import com.npro.UserManagementService.model.Users;
 import com.npro.UserManagementService.repository.UsersRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -6,11 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Optional;
-import java.util.zip.DataFormatException;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -24,14 +21,16 @@ public class UserRepositoryTest {
     private final UsersRepository usersRepository;
     private Users validUser1;
     private Users validUser2;
-    private Users inValidUser1;
+
 
 
     @BeforeEach
     void setUp() {
         validUser1=new Users("validUser1", "secretPasswordHash", true);
         validUser2=new Users("validUser2", "secretPasswordHash", true);
-        inValidUser1=new Users();
+        validUser1.setSystemRole(System_Role.BASIC_USER);
+        validUser2.setSystemRole(System_Role.BASIC_USER);
+
 
     }
 
@@ -49,6 +48,7 @@ public class UserRepositoryTest {
         user.setUsername("Test username");
         user.setPasswordHash("secretpasswordhash");
         user.setIsActive(true);
+        user.setSystemRole(System_Role.BASIC_USER);
 
         Users savedUser = usersRepository.save(user);
 

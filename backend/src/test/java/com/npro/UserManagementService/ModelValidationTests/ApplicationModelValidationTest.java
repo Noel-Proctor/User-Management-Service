@@ -5,33 +5,18 @@ import com.npro.UserManagementService.model.Role;
 import com.npro.UserManagementService.model.Users;
 import com.npro.UserManagementService.testUtil.BaseValidationTest;
 import jakarta.validation.ConstraintViolation;
-import org.hibernate.validator.internal.constraintvalidators.bv.AssertTrueValidator;
-
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import static org.assertj.core.api.Assertions.*;
-
-import java.util.List;
 import java.util.Set;
-
 @SpringBootTest
 public class ApplicationModelValidationTest extends BaseValidationTest {
-
-    private Application validApplication;
-
-//
-//    @BeforeEach
-//    void setUp() {
-//
-//    }
-
 
 
     @Test
     void testValidApplicationValidation(){
 
-        validApplication=new Application();
+        Application validApplication = new Application();
         validApplication.setApplication_name("Valid application name");
         validApplication.setOwner(
                 new Users("Valid username", "secretpasswordhash", true));
