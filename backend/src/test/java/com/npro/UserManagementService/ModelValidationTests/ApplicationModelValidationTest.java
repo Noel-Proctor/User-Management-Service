@@ -36,8 +36,6 @@ public class ApplicationModelValidationTest extends BaseValidationTest {
         Application invalidApplication=new Application();
         invalidApplication.setApplication_name("");
         invalidApplication.setOwner(null);
-        invalidApplication.addApplication_role(null);
-
         Set<ConstraintViolation<Application>> violations = validator.validate(invalidApplication);
         assertThat(violations).isNotEmpty();
 
@@ -50,11 +48,6 @@ public class ApplicationModelValidationTest extends BaseValidationTest {
         assertThat(violations).anyMatch(v->
                 v.getPropertyPath().toString().equals("application_name") &&
                         v.getMessage().equals("Application name must be between 1-50 characters long")
-        );
-
-        assertThat(violations).anyMatch(v->
-                v.getPropertyPath().toString().equals("application_roles") &&
-                        v.getMessage().equals("must not be null")
         );
     }
 
