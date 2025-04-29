@@ -5,14 +5,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
 @Entity
-public class Users {
+@Table(name = "users")
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,13 +49,13 @@ public class Users {
         isActive = active;
     }
 
-    public Users(String username, String passwordHash, boolean isActive) {
+    public User(String username, String passwordHash, boolean isActive) {
         this.username = username;
         this.passwordHash = passwordHash;
         this.isActive = isActive;
     }
 
-    public Users() {
+    public User() {
     }
 
     public Integer getId() {

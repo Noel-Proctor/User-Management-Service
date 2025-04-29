@@ -2,16 +2,17 @@ package com.npro.UserManagementService.ModelValidationTests;
 
 import com.npro.UserManagementService.model.Application;
 import com.npro.UserManagementService.model.Role;
-import com.npro.UserManagementService.model.Users;
+import com.npro.UserManagementService.model.User;
 import com.npro.UserManagementService.testUtil.BaseValidationTest;
 import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
 import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@DataJpaTest
 public class RoleModelValidationTest extends BaseValidationTest {
 
     private Application validApplication;
@@ -21,7 +22,7 @@ public class RoleModelValidationTest extends BaseValidationTest {
         validApplication=new Application();
         validApplication.setApplication_name("Valid application name");
         validApplication.setOwner(
-                new Users("Valid username", "secretpasswordhash", true));
+                new User("Valid username", "secretpasswordhash", true));
 
     }
 

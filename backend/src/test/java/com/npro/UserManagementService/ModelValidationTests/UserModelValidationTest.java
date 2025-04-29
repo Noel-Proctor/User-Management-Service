@@ -1,9 +1,10 @@
 package com.npro.UserManagementService.ModelValidationTests;
 import com.npro.UserManagementService.model.System_Role;
-import com.npro.UserManagementService.model.Users;
+import com.npro.UserManagementService.model.User;
 import com.npro.UserManagementService.testUtil.BaseValidationTest;
 import jakarta.validation.ConstraintViolation;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -11,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Set;
 
-@SpringBootTest
+@DataJpaTest
 public class UserModelValidationTest extends BaseValidationTest {
 
 
@@ -21,23 +22,23 @@ public class UserModelValidationTest extends BaseValidationTest {
 //    Assert that valid data does not throw a violation exception
     @Test
     void testCreateValidUser(){
-        Users user = new Users();
+        User user = new User();
         user.setUsername("Valid username");
         user.setPasswordHash("secretpasswordhash");
         user.setIsActive(true);
         user.setSystemRole(System_Role.BASIC_USER);
-        Set<ConstraintViolation<Users>> violations = validator.validate(user);
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
         assertTrue(violations.isEmpty());
     }
 //Test violations thrown for invalid data.
     @Test
     void testInvalidUser(){
-        Users user = new Users();
+        User user = new User();
         user.setUsername(emptyString);
         user.setPasswordHash(emptyString);
         user.setSystemRole(null);
 
-        Set<ConstraintViolation<Users>> violations = validator.validate(user);
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
 
         assertThat(violations).anyMatch(v ->
                 v.getPropertyPath().toString().equals("username") &&
