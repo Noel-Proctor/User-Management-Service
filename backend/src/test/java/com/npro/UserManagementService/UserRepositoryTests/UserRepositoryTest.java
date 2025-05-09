@@ -1,12 +1,11 @@
 package com.npro.UserManagementService.UserRepositoryTests;
 import com.npro.UserManagementService.model.System_Role;
 import com.npro.UserManagementService.model.User;
-import com.npro.UserManagementService.repository.UsersRepository;
+import com.npro.UserManagementService.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,7 +18,7 @@ public class UserRepositoryTest {
     void contextLoads() {
     }
 
-    private final UsersRepository usersRepository;
+    private final UserRepository usersRepository;
     private User validUser1;
     private User validUser2;
 
@@ -31,13 +30,15 @@ public class UserRepositoryTest {
         validUser2=new User("validUser2", "secretPasswordHash", true);
         validUser1.setSystemRole(System_Role.BASIC_USER);
         validUser2.setSystemRole(System_Role.BASIC_USER);
+        validUser1.setEmail("Test@email.com");
+        validUser2.setEmail("Test2@email.com");
 
 
     }
 
 
     @Autowired
-    public UserRepositoryTest(UsersRepository usersRepository) {
+    public UserRepositoryTest(UserRepository usersRepository) {
         this.usersRepository = usersRepository;
     }
 

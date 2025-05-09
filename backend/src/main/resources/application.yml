@@ -11,6 +11,11 @@ spring:
     url: jdbc:postgresql://localhost:5432/UserManagement
     driver-class-name: org.postgresql.Driver
 
+  security:
+    user:
+      name: root
+      password: 123qwe
+
   # Enable Flyway and point to your migrations folder
   flyway:
     enabled: true

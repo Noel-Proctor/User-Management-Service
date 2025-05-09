@@ -33,6 +33,9 @@ public class User {
     @NotNull
     private System_Role system_role;
 
+    @NotNull
+    private String email;
+
 
     @OneToMany
     private Set<Role> roles = new HashSet<>();
@@ -102,4 +105,11 @@ public class User {
         applications.add(application);
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(@NotNull String email) {
+        this.email = email;
+    }
 }
