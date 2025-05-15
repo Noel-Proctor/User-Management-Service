@@ -15,16 +15,18 @@ import org.springframework.web.bind.annotation.*;
 public class ApplicationController {
 
     private final ApplicationService applicationService;
+    private final UserFactory userFactory;
 
-    public ApplicationController(ApplicationService applicationService) {
+    public ApplicationController(ApplicationService applicationService, UserFactory userFactory) {
         this.applicationService = applicationService;
+        this.userFactory = userFactory;
     }
 
     @PostMapping()
     public ResponseEntity<ApplicationResponse> createApplication(@Valid @RequestBody NewApplicationRequest newApplicationRequest) {
 //  Making a dummy user. this will be handled by spring security next.
-        User user = UserFactory.buildDefaultUserManager();
 
+        User user = userFactory.getDefaultAdminUser();
         ApplicationResponse response = new ApplicationResponse(
                 "Application created successfully",
                 applicationService.createNewApplication(user, newApplicationRequest.getApplication_name(), newApplicationRequest.getApplication_description())
