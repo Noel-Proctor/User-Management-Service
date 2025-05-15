@@ -23,11 +23,11 @@ public class User {
     private String username;
 
     @NotBlank
-    @Size(min = 10, max = 50)
+    @Size(min = 10, max = 200)
     private String passwordHash;
 
     @NotNull
-    private boolean isActive;
+    private boolean isActive = true;
 
 //    Basic User, User Manager or Administrator
     @NotNull
@@ -81,11 +81,11 @@ public class User {
         this.username = username;
     }
 
-    public @NotBlank @Size(min = 10, max = 50) String getPasswordHash() {
+    public @NotBlank @Size(min = 10, max = 200) String getPasswordHash() {
         return passwordHash;
     }
 
-    public void setPasswordHash(@NotBlank @Size(min = 10, max = 50) String passwordHash) {
+    public void setPasswordHash(@NotBlank @Size(min = 10, max = 200) String passwordHash) {
         this.passwordHash = passwordHash;
     }
 

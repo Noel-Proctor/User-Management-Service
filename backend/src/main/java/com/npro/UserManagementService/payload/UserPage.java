@@ -4,7 +4,7 @@ import java.util.List;
 
 public class UserPage {
 
-    private List<UserResponse> budgetList;
+    private List<UserResponse> userList;
     private boolean firstPage;
     private Integer totalPages;
     private Integer currentPage;
@@ -14,7 +14,7 @@ public class UserPage {
     private boolean lastPage;
 
     public UserPage(List<UserResponse> budgetList, boolean firstPage, Integer totalPages, Integer currentPage, Integer totalElements, Integer size, Integer total, boolean lastPage) {
-        this.budgetList = budgetList;
+        this.userList = budgetList;
         this.firstPage = firstPage;
         this.totalPages = totalPages;
         this.currentPage = currentPage;
@@ -27,12 +27,12 @@ public class UserPage {
     public UserPage() {
     }
 
-    public List<UserResponse> getBudgetList() {
-        return budgetList;
+    public List<UserResponse> getUserList() {
+        return userList;
     }
 
-    public void setBudgetList(List<UserResponse> budgetList) {
-        this.budgetList = budgetList;
+    public void setUserList(List<UserResponse> userList) {
+        this.userList = userList;
     }
 
     public boolean isFirstPage() {

@@ -1,5 +1,6 @@
 package com.npro.UserManagementService.controllers;
 
+import com.npro.UserManagementService.config.AppConstants;
 import com.npro.UserManagementService.payload.UserDTO;
 import com.npro.UserManagementService.payload.UserPage;
 import com.npro.UserManagementService.payload.UserResponse;
@@ -26,12 +27,27 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-//    @GetMapping
-//    public ResponseEntity<UserPage> getUserPage(@RequestParam(name = "pageNumber", default)Integer pageNumber ){
-//        UserPage response = userService.getAllUsers(pageNumber, pageSize, sortBy, direction);
-//        retrun new ResponseEntity<>(response, HttpStatus.OK);
-//
-//    }
+    @GetMapping
+    public ResponseEntity<UserPage> getUserPage(@RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER)Integer pageNumber,
+                                @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE) Integer pageSize,
+                                @RequestParam(name = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY) String sortBy,
+                                @RequestParam(name = "direction", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION) String direction){
+
+        UserPage response = userService.getAllUsers(pageNumber, pageSize, sortBy, direction);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
+    @GetMapping("/loginTest")
+    public String LoginTest(){
+        return "Login Successful";
+    }
+
+    @PostMapping("/postTest")
+    public String postTest(@RequestBody String body){
+
+        return "Post Successful: "+body;
+    }
 
 
 }

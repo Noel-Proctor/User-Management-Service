@@ -1,6 +1,7 @@
 package com.npro.UserManagementService.exceptions;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -17,8 +18,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));
     }
 
-    @ExceptionHandler(APIException.class)
-    public ResponseEntity<Map<String, String>> handleAPIException(APIException e) {
+    @ExceptionHandler({APIException.class, UsernameNotFoundException.class})
+    public ResponseEntity<Map<String, String>> handleAPIException(Exception e) {
         return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
     }
 
@@ -29,9 +30,9 @@ public class GlobalExceptionHandler {
         ex.getBindingResult().getFieldErrors().forEach(error -> {
             errors.put(error.getField(), error.getDefaultMessage());
         });
-
         return ResponseEntity.badRequest().body(errors);
     }
+
 
 
 
