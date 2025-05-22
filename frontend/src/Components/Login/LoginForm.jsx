@@ -1,8 +1,7 @@
 import { Button, Checkbox, Container, FormControl, FormControlLabel, TextField, Grid, Link } from '@mui/material'
 import { Box } from '@mui/system'
 import { Typography } from '@mui/material'
-import { Form } from 'react-router';
-
+import { api } from '../../api/api.js'
 
 
 //This function handles the form submission
@@ -12,7 +11,8 @@ const handleSubmit = (event) => {
     const data = new FormData(event.currentTarget);
     console.log(data.get('email'));
     console.log(data.get('password'));
-
+    const user = api.get('/v1/user/authentication/login');
+    console.log(user.data);
 };
 
 function LoginForm() {

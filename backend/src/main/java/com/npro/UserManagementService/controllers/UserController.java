@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("api/v1/user")
+@RequestMapping("user")
 public class UserController {
 
     private final UserService userService;
@@ -37,17 +37,4 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
-
-    @GetMapping("/loginTest")
-    public String LoginTest(){
-        return "Login Successful";
-    }
-
-    @PostMapping("/postTest")
-    public String postTest(@RequestBody String body){
-
-        return "Post Successful: "+body;
-    }
-
-
 }
