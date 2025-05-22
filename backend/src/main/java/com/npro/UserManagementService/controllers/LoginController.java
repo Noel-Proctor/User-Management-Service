@@ -3,7 +3,6 @@ package com.npro.UserManagementService.controllers;
 import com.npro.UserManagementService.payload.LoginResponse;
 import com.npro.UserManagementService.payload.UserDTO;
 import com.npro.UserManagementService.service.UserService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

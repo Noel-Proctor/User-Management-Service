@@ -30,8 +30,8 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
-    private AuthenticationManager authenticationManager;
-    private JWTService jwtService;
+    private final AuthenticationManager authenticationManager;
+    private final JWTService jwtService;
 
     public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,
     JWTService jwtService) {
