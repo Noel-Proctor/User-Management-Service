@@ -38,3 +38,8 @@
 .read-the-docs {
   color: #888;
 }
+
+.Toastify__toast {
+  min-width: 480px;
+  max-width: 90vw;
+}

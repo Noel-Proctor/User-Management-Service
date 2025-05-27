@@ -14,6 +14,7 @@ public class LoginController {
         this.userService = userService;
     }
 
+    @CrossOrigin("http://localhost:5173")
     @PostMapping("/login")
     public LoginResponse Login(@RequestBody UserDTO user) {
 

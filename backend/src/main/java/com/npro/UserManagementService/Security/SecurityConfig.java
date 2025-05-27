@@ -10,6 +10,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -35,21 +36,24 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, CsrfController csrfController) throws Exception{
-        CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
-        CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
-        // set the name of the attribute the CsrfToken will be populated on
-        requestHandler.setCsrfRequestAttributeName("_csrf");
+    public SecurityFilterChain UIsecurityFilterChain(HttpSecurity httpSecurity) throws Exception{
+//        CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+//        CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
+//        // set the name of the attribute the CsrfToken will be populated on
+//        requestHandler.setCsrfRequestAttributeName("_csrf");
 
         httpSecurity
-                .csrf(csrf -> csrf.csrfTokenRepository(tokenRepository)
-                        .csrfTokenRequestHandler(requestHandler))
+//                Disabling CSRF protection for now as application is stateless and using JTW tokens for login. May need to reconfigure in the future.
+//                .csrf(csrf -> csrf.csrfTokenRepository(tokenRepository)
+//                        .csrfTokenRequestHandler(requestHandler))
+                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/api/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/api/**").hasAnyRole("ADMIN", "USER_MANAGER")
                                 .requestMatchers("/login", "/csrf").permitAll()
                                 .anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults())
+//                .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
