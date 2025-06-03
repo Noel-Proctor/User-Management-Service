@@ -3,18 +3,23 @@ package com.npro.UserManagementService.service;
 import com.npro.UserManagementService.exceptions.APIException;
 import com.npro.UserManagementService.model.System_Role;
 import com.npro.UserManagementService.model.User;
+import com.npro.UserManagementService.payload.LoginResponse;
 import com.npro.UserManagementService.payload.UserDTO;
 import com.npro.UserManagementService.payload.UserPage;
 import com.npro.UserManagementService.payload.UserResponse;
 import com.npro.UserManagementService.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.npro.UserManagementService.Security.JWTService;
 
 import java.util.List;
 
@@ -26,11 +31,16 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JWTService jwtService;
 
-    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,
+    JWTService jwtService) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
     public UserResponse createNewUser(UserDTO newUserRequest){
@@ -91,7 +101,19 @@ public class UserServiceImpl implements UserService{
         return userPage;
     }
 
+    @Override
+    public LoginResponse verify(UserDTO user) {
+        LoginResponse response = new LoginResponse();
+        Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPasswordHash()));
+        if(auth.isAuthenticated()){
+            response.setMessage("success");
+//            response.setToken(jwtService.generateTokens(user.getUsername(), request));
+            return response;
+        }
 
+        response.setMessage("Invalid Credentials");
+        return response;
+    }
 
 
 }

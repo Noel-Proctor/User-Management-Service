@@ -1,21 +1,134 @@
 import { Button, Checkbox, Container, FormControl, FormControlLabel, TextField, Grid, Link } from '@mui/material'
 import { Box } from '@mui/system'
 import { Typography } from '@mui/material'
-import { Form } from 'react-router';
+import { api } from '../../api/api.js'
+import { useContext, useEffect, useState, useRef } from 'react'
+import { toast } from 'react-toastify';
+import AuthContext from '../../context/AuthProvider.jsx';
+import qs from "qs";
+import { useNavigate } from 'react-router'
 
 
 
-//This function handles the form submission
-//It prevents the default form submission behavior and logs the email and password values to the console
-const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log(data.get('email'));
-    console.log(data.get('password'));
-
-};
 
 function LoginForm() {
+
+    const { doLogin } = useContext(AuthContext);
+    const userRef = useRef();
+    const navigate = useNavigate();
+
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [isUsernameValid, setIsUsernameValid] = useState(true);
+    const [usernameValidationMessage, setUsernameValidationMessage] = useState('');
+    const [isPasswordValid, setIsPasswordValid] = useState(true);
+    const [passwordValidationMessage, setPasswordValidationMessage] = useState('');
+
+
+    useEffect(() => {
+        userRef.current.focus();
+    }, [])
+
+    useEffect(() => {
+        setUsernameValidationMessage('');
+        setIsUsernameValid(true);
+    }, [])
+
+    useEffect(() => {
+        setIsPasswordValid(true);
+        setPasswordValidationMessage('');
+    }, [])
+
+    function validateForm() {
+
+        let valid = true;
+        if (!username || !password) {
+            if (!username) {
+                setIsUsernameValid(false);
+                setUsernameValidationMessage('Username cannot be empty');
+            } else {
+                setIsUsernameValid(true);
+                setUsernameValidationMessage('');
+            }
+            if (!password) {
+                setIsPasswordValid(false);
+                setPasswordValidationMessage('Password cannot be empty');
+            } else {
+                setIsPasswordValid(true);
+                setPasswordValidationMessage("");
+            }
+            valid = false;
+        } else {
+            setIsUsernameValid(true);
+            setUsernameValidationMessage('');
+            setIsPasswordValid(true);
+            setPasswordValidationMessage("");
+        }
+        return valid;
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!validateForm()) {
+            toast.error('Please Check Form');
+            return;
+        }
+
+        try {
+
+            let body = qs.stringify({ username, password: password })
+
+            const response = await api.post(`${import.meta.env.VITE_LOGIN_URL}`,
+                body,
+                {
+                    headers: { "Content-Type": 'application/x-www-form-urlencoded' },
+                    withCredentials: true
+                }
+
+            );
+
+            console.log(response.data);
+            toast.success("Well come on insideee.");
+            const accessToken = response?.data?.accessToken;
+            doLogin(accessToken);
+
+            // const roles = response?.data?.roles;
+            // setAuth({ username, roles: "N/A", accessToken });
+            // setUsername('');
+            // setPassword('');
+            // navigate("/home");
+        } catch (err) {
+            console.log("Error Flow " + err.response);
+            console.log(err)
+            if (err.code === "ERR_NETWORK") {
+                toast.error("Network Error");
+
+            } else {
+                if (err.response.status === 401) {
+                    toast.error("Invalid Login");
+                } else {
+                    toast.error("Opps. Something went wrong.");
+                }
+
+            }
+
+        }
+    }
+
+    const rememberMeOnChange = () => {
+        toast.info("Come back later and this might do something");
+    }
+
+
+    const forgotPasswordOnClick = () => {
+        toast.info("Tough Shit.");
+    }
+
+    const requestAccountOnClick = () => {
+        toast.info("Not tonight mate");
+    }
+
     return (
 
         < Container disableGutters>
@@ -42,26 +155,39 @@ function LoginForm() {
 
                 <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
                     <TextField
+                        error={!isUsernameValid}
                         margin="normal"
                         required
                         fullWidth
-                        id="email"
-                        label="Email Address"
-                        name="email"
-                        autoComplete="email"
-                        autoFocus></TextField>
+                        inputRef={userRef}
+                        id="username"
+                        label="Username"
+                        name="username"
+                        autoComplete="username"
+                        value={username}
+                        helperText={usernameValidationMessage}
+                        type="text"
+                        onChange={(e) => setUsername(e.target.value)}
+                        autoFocus
+                    ></TextField>
                     <TextField
+                        error={!isPasswordValid}
+                        helperText={passwordValidationMessage}
                         margin="normal"
                         required
                         fullWidth
                         id="password"
                         label="Password"
                         name="password"
-                        autoComplete="password"
-                        autoFocus></TextField>
+                        value={password}
+                        type="password"
+                        autoComplete="current=password"
+                        onChange={(e) => setPassword(e.target.value)}></TextField>
 
                     <FormControlLabel
-                        control={<Checkbox value="remember" color="primary" />} label="Remember me" />
+                        control={<Checkbox value="remember" color="primary" />
+                        } label="Remember me"
+                        onChange={rememberMeOnChange} />
 
                     <Button
                         type='submit'
@@ -72,10 +198,12 @@ function LoginForm() {
 
                     <Grid container justifyContent={"space-between"}>
                         <Grid mx={2} >
-                            <Link variant="body2">Forgot Password?</Link>
+                            <Link variant="body2"
+                                onClick={forgotPasswordOnClick}>Forgot Password?</Link>
                         </Grid>
                         <Grid mx={2}>
-                            <Link variant="body2">Request An Account</Link>
+                            <Link variant="body2"
+                                onClick={requestAccountOnClick}>Request An Account</Link>
                         </Grid>
                     </Grid>
                 </Box>
@@ -85,5 +213,5 @@ function LoginForm() {
     );
 }
 
-export default LoginForm;
-// This is a simple login form component in React. It includes two input fields for username and password, and a submit button.
+
+export default LoginForm

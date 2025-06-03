@@ -15,6 +15,7 @@ spring:
     user:
       name: root
       password: 123qwe
+    secret: UWs+tfBwc31BRGnHqUYs4TKVjBAaqdK0dH6a9uXFNLY
 
   # Enable Flyway and point to your migrations folder
   flyway:
