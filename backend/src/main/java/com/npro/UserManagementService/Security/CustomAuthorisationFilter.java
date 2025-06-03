@@ -1,63 +1,60 @@
 package com.npro.UserManagementService.Security;
-
-import com.npro.UserManagementService.service.CustomUserDetailsServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.context.ApplicationContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
 @Component
-public class JwtFilter extends OncePerRequestFilter {
+public class CustomAuthorisationFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private JWTService jwtService;
 
-    @Autowired
-    ApplicationContext appContext;
+    private final JWTService jwtService;
+    private static final String LOGIN_PATH = "/login";
+
+    public CustomAuthorisationFilter(JWTService jwtService) {
+        this.jwtService = jwtService;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        String authHeader = request.getHeader("Authorization");
-        String token = null;
-        String username = null;
+            throws IOException {
 
-        if(authHeader !=null && authHeader.startsWith("Bearer ")){
-            token = authHeader.substring(7);
-            username = jwtService.extractUsername(token);
-        }
-
-//        If context is null, user is not authenticated and we need to authenticate.
-        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
-
-            UserDetails userDetails = appContext.getBean(CustomUserDetailsServiceImpl.class).loadUserByUsername(username);
-
-            if(jwtService.validateToken(token, userDetails)){
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-
-                authToken.setDetails( new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+            try{
+                String authHeader = request.getHeader(AUTHORIZATION);
+                if(authHeader != null && authHeader.startsWith("Bearer ")){
+                    String token = authHeader.substring("Bearer ".length());
+                    UsernamePasswordAuthenticationToken authToken = jwtService.validateToken(token);
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                    filterChain.doFilter(request, response);
+                }else {
+                    filterChain.doFilter(request, response);
+                }
+            }catch (Exception e){
+                response.setHeader("error", "Token Invalid");
+                response.setContentType(APPLICATION_JSON_VALUE);
+                response.setStatus(FORBIDDEN.value());
+                Map<String, String> errors = new HashMap<>();
+                errors.put("error","Token Invalid");
+                new ObjectMapper().writeValue(response.getOutputStream(),errors);
             }
         }
 
-        filterChain.doFilter(request, response);
-
-//        If context is not null, user is authenticated already and has a session.
-
-
-
-
-
+    //Skips filter if current path is login path.
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return LOGIN_PATH.equals(request.getServletPath());
     }
+
 }

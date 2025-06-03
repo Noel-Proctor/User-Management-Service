@@ -17,8 +17,11 @@ public class UserController {
 
     private final UserService userService;
 
+
     public UserController(UserService userService) {
+
         this.userService = userService;
+
     }
 
     @PostMapping
@@ -37,4 +40,5 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
+
 }

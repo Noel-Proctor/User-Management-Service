@@ -16,7 +16,7 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
-    public UserDetails loadUserByUsername(String username) {
+    public UserPrincipal loadUserByUsername(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(
                 ()-> new UsernameNotFoundException("User not found with username:"+username));
 

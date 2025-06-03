@@ -2,11 +2,20 @@ import { Button, Checkbox, Container, FormControl, FormControlLabel, TextField, 
 import { Box } from '@mui/system'
 import { Typography } from '@mui/material'
 import { api } from '../../api/api.js'
-import { useState } from 'react'
+import { useContext, useEffect, useState, useRef } from 'react'
 import { toast } from 'react-toastify';
+import AuthContext from '../../context/AuthProvider.jsx';
+import qs from "qs";
+import { useNavigate } from 'react-router'
+
+
 
 
 function LoginForm() {
+
+    const { doLogin } = useContext(AuthContext);
+    const userRef = useRef();
+    const navigate = useNavigate();
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -14,6 +23,21 @@ function LoginForm() {
     const [usernameValidationMessage, setUsernameValidationMessage] = useState('');
     const [isPasswordValid, setIsPasswordValid] = useState(true);
     const [passwordValidationMessage, setPasswordValidationMessage] = useState('');
+
+
+    useEffect(() => {
+        userRef.current.focus();
+    }, [])
+
+    useEffect(() => {
+        setUsernameValidationMessage('');
+        setIsUsernameValid(true);
+    }, [])
+
+    useEffect(() => {
+        setIsPasswordValid(true);
+        setPasswordValidationMessage('');
+    }, [])
 
     function validateForm() {
 
@@ -47,25 +71,41 @@ function LoginForm() {
         e.preventDefault();
 
         if (!validateForm()) {
-            toast.error('fuck off cunt');
+            toast.error('Please Check Form');
             return;
         }
 
         try {
-            const response = await api.post('/login', {
-                username: username,
-                passwordHash: password
-            });
+
+            let body = qs.stringify({ username, password: password })
+
+            const response = await api.post(`${import.meta.env.VITE_LOGIN_URL}`,
+                body,
+                {
+                    headers: { "Content-Type": 'application/x-www-form-urlencoded' },
+                    withCredentials: true
+                }
+
+            );
 
             console.log(response.data);
+            toast.success("Well come on insideee.");
+            const accessToken = response?.data?.accessToken;
+            doLogin(accessToken);
 
+            // const roles = response?.data?.roles;
+            // setAuth({ username, roles: "N/A", accessToken });
+            // setUsername('');
+            // setPassword('');
+            // navigate("/home");
         } catch (err) {
-            // console.log("Error Flow " + err.response);
+            console.log("Error Flow " + err.response);
+            console.log(err)
             if (err.code === "ERR_NETWORK") {
                 toast.error("Network Error");
 
             } else {
-                if (err.code === "ERR_BAD_REQUEST" && err.response.data.error == "Bad credentials") {
+                if (err.response.status === 401) {
                     toast.error("Invalid Login");
                 } else {
                     toast.error("Opps. Something went wrong.");
@@ -119,10 +159,12 @@ function LoginForm() {
                         margin="normal"
                         required
                         fullWidth
+                        inputRef={userRef}
                         id="username"
                         label="Username"
                         name="username"
                         autoComplete="username"
+                        value={username}
                         helperText={usernameValidationMessage}
                         type="text"
                         onChange={(e) => setUsername(e.target.value)}
@@ -137,10 +179,10 @@ function LoginForm() {
                         id="password"
                         label="Password"
                         name="password"
-                        autoComplete="password"
+                        value={password}
                         type="password"
-                        onChange={(e) => setPassword(e.target.value)}
-                        autoFocus></TextField>
+                        autoComplete="current=password"
+                        onChange={(e) => setPassword(e.target.value)}></TextField>
 
                     <FormControlLabel
                         control={<Checkbox value="remember" color="primary" />

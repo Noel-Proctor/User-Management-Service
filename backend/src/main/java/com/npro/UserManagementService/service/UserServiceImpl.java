@@ -8,6 +8,7 @@ import com.npro.UserManagementService.payload.UserDTO;
 import com.npro.UserManagementService.payload.UserPage;
 import com.npro.UserManagementService.payload.UserResponse;
 import com.npro.UserManagementService.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -106,7 +107,7 @@ public class UserServiceImpl implements UserService{
         Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPasswordHash()));
         if(auth.isAuthenticated()){
             response.setMessage("success");
-            response.setToken(jwtService.generateToken(user.getUsername()));
+//            response.setToken(jwtService.generateTokens(user.getUsername(), request));
             return response;
         }
 
