@@ -1,7 +1,5 @@
-# User-Management-Service
-Repository containing code for a user management service application
 # User Management Service
-
+Repository containing code for a user management service application
 Very Early stages of development. 
 This repository contains a personal project aimed at building a **configurable authentication and user management platform**.  Users can register their own applications and then manage the roles and users associated with those applications.  Each application can delegate login to this service which issues JSON Web Tokens (JWT) for authentication.
 
