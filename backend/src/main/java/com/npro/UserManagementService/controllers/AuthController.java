@@ -35,9 +35,11 @@ public class AuthController {
     @GetMapping("/refreshToken")
     public ResponseEntity<Map<String, String>> refreshTokens(HttpServletRequest request,
                                                              @CookieValue("refreshToken") String refreshToken){
+        System.out.println("Refresh: "+refreshToken);
+
         Map<String, String> tokens = jwtService.refreshTokens(refreshToken, request);
         ResponseCookie cookie = ResponseCookie.from(tokens.get("refreshToken")).httpOnly(true).secure(true)
-                .sameSite("Strict").path("/auth/refreshToken").maxAge(Duration.ofMillis(AppConstants.REFRESH_TOKEN_VALIDITY))
+                .sameSite("Strict").path("/auth").maxAge(Duration.ofMillis(AppConstants.REFRESH_TOKEN_VALIDITY))
                 .build();
 
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
@@ -47,22 +49,17 @@ public class AuthController {
 
 
     @PostMapping("/logout")
-    public void logout(HttpServletRequest request, HttpServletResponse response){
+    public void logout(HttpServletRequest request, HttpServletResponse response, @CookieValue("refreshToken") String refreshToken){
 
-//        In the future I need to add a form of token blacklisting on logout. I am not worrying about this for now however.
-//        It can be added later and security maintain with short token expiry times.
-//        String token = extractToken(request);
-//        tokenService.saveExpiredToken(token);
+        System.out.println("Token: "+refreshToken);
         ResponseCookie deletionCookie = ResponseCookie
                 .from("refreshToken", "")
-                .path("/")
+                .path("/auth")
+                .sameSite("Strict")
                 .httpOnly(true)
                 .secure(true)
-                .sameSite("Strict")
                 .maxAge(0)
                 .build();
-
-
 
         response.addHeader(HttpHeaders.SET_COOKIE, deletionCookie.toString());
         SecurityContextHolder.clearContext();
