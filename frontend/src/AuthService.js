@@ -1,8 +1,8 @@
-import api from "/api/api.js";
+import { axios } from "/api/axios.js";
 
 class AuthService {
   login(credentials) {
-    return api.post("/login", credentials);
+    return axios.post("/login", credentials);
   }
 }
 
