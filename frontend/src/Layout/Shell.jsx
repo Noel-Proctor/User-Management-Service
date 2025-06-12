@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useLayoutEffect } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -20,6 +20,14 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import { Outlet, useNavigate } from 'react-router';
 import DarkModeToggle from '../Theme/DarkModeToggle';
+import useAuth from '../hooks/useAuth';
+import { ROLES } from '../Util/constants';
+import useLogout from '../hooks/useLogout';
+
+import Stack from '@mui/material/Stack';
+import LogoutButton from '../components/LogoutButton';
+
+
 
 const drawerWidth = 240;
 
@@ -102,10 +110,15 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     }),
 );
 
+
+
+
 export function Shell() {
     const theme = useTheme();
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
     const navigate = useNavigate();
+    const { hasRole } = useAuth();
+    const logout = useLogout();
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -114,6 +127,7 @@ export function Shell() {
     const handleDrawerClose = () => {
         setOpen(false);
     };
+
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -138,6 +152,7 @@ export function Shell() {
                         User Management Service
                     </Typography>
                 </Toolbar>
+
             </AppBar>
 
             <Drawer variant="permanent" open={open}>
@@ -154,7 +169,7 @@ export function Shell() {
                 }}>
 
                     <List>
-                        {['Home', 'Contact', 'Send email', 'Drafts'].map((text, index) => (
+                        {['Home', 'Applications'].map((text, index) => (
                             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
                                 <ListItemButton
                                     sx={[
@@ -171,7 +186,17 @@ export function Shell() {
                                             },
 
                                     ]}
-                                    onClick={() => navigate(`/${text.toLowerCase()}`)}
+                                    onClick={() => {
+                                        if (text === "Home") {
+                                            navigate("/")
+                                        } else {
+                                            navigate(`/${text.toLowerCase()}`)
+
+                                        }
+
+
+                                    }
+                                    }
                                 >
                                     <ListItemIcon
                                         sx={[
@@ -207,64 +232,82 @@ export function Shell() {
                         ))}
                     </List>
                     <Divider />
-                    <List>
-                        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-                                <ListItemButton
-                                    sx={[
-                                        {
-                                            minHeight: 48,
-                                            px: 2.5,
-                                        },
-                                        open
-                                            ? {
-                                                justifyContent: 'initial',
-                                            }
-                                            : {
-                                                justifyContent: 'center',
-                                            },
-                                    ]}
-                                >
-                                    <ListItemIcon
+
+
+                    {hasRole(ROLES[1]) && (
+                        <List>
+                            {['Maintain Users'].map((text, index) => (
+                                <ListItem key={text} disablePadding sx={{ display: 'block' }}>
+                                    <ListItemButton
                                         sx={[
                                             {
-                                                minWidth: 0,
-                                                justifyContent: 'center',
+                                                minHeight: 48,
+                                                px: 2.5,
                                             },
                                             open
                                                 ? {
-                                                    mr: 3,
+                                                    justifyContent: 'initial',
                                                 }
                                                 : {
-                                                    mr: 'auto',
+                                                    justifyContent: 'center',
                                                 },
                                         ]}
+
+
+                                        onClick={() => {
+                                            navigate(`/admin/${text.replace(" ", "")}`)
+                                        }}
                                     >
-                                        {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                                    </ListItemIcon>
-                                    <ListItemText
-                                        primary={text}
-                                        sx={[
-                                            open
-                                                ? {
-                                                    opacity: 1,
-                                                }
-                                                : {
-                                                    opacity: 0,
+                                        <ListItemIcon
+                                            sx={[
+                                                {
+                                                    minWidth: 0,
+                                                    justifyContent: 'center',
                                                 },
-                                        ]}
-                                    />
-                                </ListItemButton>
-                            </ListItem>
-                        ))}
-                    </List>
+                                                open
+                                                    ? {
+                                                        mr: 3,
+                                                    }
+                                                    : {
+                                                        mr: 'auto',
+                                                    },
+                                            ]}
+                                        >
+                                            {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary={text}
+                                            sx={[
+                                                open
+                                                    ? {
+                                                        opacity: 1,
+                                                    }
+                                                    : {
+                                                        opacity: 0,
+                                                    },
+                                            ]}
+                                        />
+                                    </ListItemButton>
+                                </ListItem>
+                            ))}
+                        </List>
+                    )}
                 </Box>
+
                 <Box sx={{
                     marginBottom: '10%',
+                    alignItems: 'center',
+                    justifyContent: 'center'
 
                 }}>
-                    <DarkModeToggle></DarkModeToggle>
+
+                    <Stack direction={open ? "row" : "column"} spacing={1} alignItems="center" justifyContent="center" divider={<Divider flexItem />}>
+                        <LogoutButton></LogoutButton>
+                        <DarkModeToggle></DarkModeToggle>
+                    </Stack>
+
                 </Box>
+
 
             </Drawer>
 

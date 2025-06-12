@@ -48,8 +48,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         ResponseCookie cookie = ResponseCookie.from("refreshToken", tokens.get("refreshToken"))
                 .httpOnly(true)
+                .sameSite("Strict")
                 .secure(true)
-                .path("/auth/refreshToken")
+                .path("/auth")
                 .maxAge(Duration.ofMillis(AppConstants.REFRESH_TOKEN_VALIDITY))
                 .build();
 

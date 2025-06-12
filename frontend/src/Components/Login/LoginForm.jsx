@@ -1,29 +1,25 @@
 import { Button, Checkbox, Container, FormControl, FormControlLabel, TextField, Grid, Link } from '@mui/material'
 import { Box } from '@mui/system'
 import { Typography } from '@mui/material'
-import { api } from '../../api/api.js'
-import { useContext, useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { toast } from 'react-toastify';
-import AuthContext from '../../context/AuthProvider.jsx';
-import qs from "qs";
-import { useNavigate } from 'react-router'
+import * as qs from 'qs';
+import axios from "../../api/axios.js";
+import useAuth from "../../hooks/useAuth.jsx"
 
 
 
 
 function LoginForm() {
 
-    const { doLogin } = useContext(AuthContext);
+    const { doLogin } = useAuth();
     const userRef = useRef();
-    const navigate = useNavigate();
-
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [isUsernameValid, setIsUsernameValid] = useState(true);
     const [usernameValidationMessage, setUsernameValidationMessage] = useState('');
     const [isPasswordValid, setIsPasswordValid] = useState(true);
     const [passwordValidationMessage, setPasswordValidationMessage] = useState('');
-
 
     useEffect(() => {
         userRef.current.focus();
@@ -70,51 +66,41 @@ function LoginForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!validateForm()) {
-            toast.error('Please Check Form');
-            return;
-        }
-
         try {
 
-            let body = qs.stringify({ username, password: password })
+            if (!validateForm()) {
+                toast.error('Please Check Form');
+                return;
+            }
 
-            const response = await api.post(`${import.meta.env.VITE_LOGIN_URL}`,
+            let body = qs.stringify({ username, password: password })
+            const response = await axios.post(`${import.meta.env.VITE_LOGIN_URL}`,
                 body,
                 {
                     headers: { "Content-Type": 'application/x-www-form-urlencoded' },
                     withCredentials: true
                 }
-
             );
 
-            console.log(response.data);
-            toast.success("Well come on insideee.");
             const accessToken = response?.data?.accessToken;
             doLogin(accessToken);
-
-            // const roles = response?.data?.roles;
-            // setAuth({ username, roles: "N/A", accessToken });
-            // setUsername('');
-            // setPassword('');
-            // navigate("/home");
         } catch (err) {
             console.log("Error Flow " + err.response);
-            console.log(err)
-            if (err.code === "ERR_NETWORK") {
-                toast.error("Network Error");
 
+            if (!err?.response) {
+                toast.error("There was an error. If the error continues please contact system administrators.");
+            } else if (err.response?.status === 400) {
+                alert("Missing username of password");
+            } else if (err.response?.status === 401) {
+                toast.error("Invalid Login");
             } else {
-                if (err.response.status === 401) {
-                    toast.error("Invalid Login");
-                } else {
-                    toast.error("Opps. Something went wrong.");
-                }
-
+                toast.error("Opps. Something went wrong.");
             }
 
         }
+
     }
+
 
     const rememberMeOnChange = () => {
         toast.info("Come back later and this might do something");
@@ -211,7 +197,7 @@ function LoginForm() {
         </Container >
 
     );
-}
 
+}
 
 export default LoginForm
