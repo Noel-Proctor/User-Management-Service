@@ -1,11 +1,16 @@
 package com.npro.UserManagementService.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+
+import java.time.LocalDateTime;
+import java.util.Date;
+
 @Entity
-@Table(name = "ExpiredTokens")
-public class ExpiredToken {
+@Table(name = "RevokedTokens")
+public class RevokedToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,10 +19,15 @@ public class ExpiredToken {
 
     @Size(min =1, max = 255)
     @Column(unique = true, nullable = false)
-    private final String token;
+    private String token;
+
+    @NotNull
+    private Date expiresAt;
 
 
-    public ExpiredToken(String token) {
+    public RevokedToken(String token, Date expiresAt) {
         this.token = token;
+        this.expiresAt = expiresAt;
+
     }
 }

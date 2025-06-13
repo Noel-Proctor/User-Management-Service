@@ -15,10 +15,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 import static java.util.Arrays.stream;
@@ -135,11 +138,40 @@ public class JWTService {
             return generateTokens(user, request);
 
         } catch (JWTVerificationException e) {
-            tokenService.saveExpiredToken(token);
+            tokenService.saveRevokedToken(token);
             throw new APIException("Invalid Credentials");
         } catch (Exception e) {
             throw new APIException("Invalid Credentials");
         }
+    }
+
+    public ResponseCookie getRefreshCookie(String token){
+        ResponseCookie cookie = ResponseCookie
+                .from("refreshToken", token)
+                .httpOnly(true)
+                .sameSite("Strict")
+                .secure(true)
+                .path("/auth")
+                .maxAge(Duration.ofMillis(AppConstants.REFRESH_TOKEN_VALIDITY))
+                .build();
+
+        return cookie;
+
+    }
+
+
+    public ResponseCookie getResetCookie(){
+        ResponseCookie resetCookie = ResponseCookie
+                .from("refreshToken", "")
+                .httpOnly(true)
+                .sameSite("Strict")
+                .secure(true)
+                .path("/auth")
+                .maxAge(0)
+                .build();
+
+        return resetCookie;
+
     }
 }
 
