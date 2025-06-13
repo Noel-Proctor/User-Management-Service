@@ -46,14 +46,14 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         UserPrincipal user = (UserPrincipal) authentication.getPrincipal();
         Map<String, String> tokens = jwtService.generateTokens(user, request);
 
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", tokens.get("refreshToken"))
-                .httpOnly(true)
-                .sameSite("Strict")
-                .secure(true)
-                .path("/auth")
-                .maxAge(Duration.ofMillis(AppConstants.REFRESH_TOKEN_VALIDITY))
-                .build();
-
+//        ResponseCookie cookie = ResponseCookie.from("refreshToken", tokens.get("refreshToken"))
+//                .httpOnly(true)
+//                .sameSite("Strict")
+//                .secure(true)
+//                .path("/auth")
+//                .maxAge(Duration.ofMillis(AppConstants.REFRESH_TOKEN_VALIDITY))
+//                .build();
+        ResponseCookie cookie = jwtService.getRefreshCookie(tokens.get("refreshToken"));
         response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         response.setContentType(APPLICATION_JSON_VALUE);
         tokens.remove("refreshToken");

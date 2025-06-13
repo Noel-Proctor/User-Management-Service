@@ -31,7 +31,8 @@ public class CustomAuthorisationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException {
-
+//Could add some logic here to check if access token has been revoked. Not going to for now. Will rely on short expiry times for
+//        the access token.
             try{
                 String authHeader = request.getHeader(AUTHORIZATION);
                 if(authHeader != null && authHeader.startsWith("Bearer ")){
